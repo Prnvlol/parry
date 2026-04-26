@@ -3,14 +3,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "parry"
+name = "parry-ai"
 version = "0.1.0"
 description = "Agent-native runtime security guardrail for AI agents"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 authors = [
-    { name = "Pranav Suresh", email = "pranavsuresh.dev@gmail.com" },
+    { name = "Pranav Suresh", email = "prnvlol@protonmail.com" },
 ]
 keywords = ["ai", "security", "llm", "agents", "guardrails", "prompt-injection"]
 classifiers = [

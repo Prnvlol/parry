@@ -2,6 +2,11 @@
 
 > Agent-native runtime security guardrail for AI agents.
 
+[![CI](https://github.com/Prnvlol/parry/actions/workflows/ci.yml/badge.svg)](https://github.com/Prnvlol/parry/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/parry-ai)](https://pypi.org/project/parry-ai/)
+[![Python](https://img.shields.io/pypi/pyversions/parry-ai)](https://pypi.org/project/parry-ai/)
+[![License](https://img.shields.io/github/license/Prnvlol/parry)](LICENSE)
+
 **Analyze with [ARA](https://github.com/Prnvlol/agent-risk-analyzer). Protect with Parry.**
 
 ```
@@ -18,17 +23,17 @@ Parry sits in the hot path of your AI application and intercepts threats before 
 ## Install
 
 ```bash
-pip install parry
+pip install parry-ai
 ```
 
 For optional extras:
 
 ```bash
-pip install parry[full]       # + pydantic, pyyaml
-pip install parry[openai]     # + openai SDK
-pip install parry[anthropic]  # + anthropic SDK
-pip install parry[langchain]  # + langchain-core
-pip install parry[fastapi]    # + starlette
+pip install parry-ai[full]       # + pydantic, pyyaml
+pip install parry-ai[openai]     # + openai SDK
+pip install parry-ai[anthropic]  # + anthropic SDK
+pip install parry-ai[langchain]  # + langchain-core
+pip install parry-ai[fastapi]    # + starlette
 ```
 
 ---
@@ -293,7 +298,9 @@ report = guard.scan_multi_agent_trust(
 
 - [Developer Docs](DEVELOPER.md) — full API reference, all configuration options, integration guides
 - [Examples](examples/) — runnable examples for every threat type
-- [Agent Risk Analyzer](https://github.com/Prnvlol/agent-risk-analyzer) — static security scanner for AI agent codebases
+- [Agent Risk Analyzer](https://github.com/Prnvlol/agent-risk-analyzer) — static security scanner for AI agent codebases (`pip install arascan`)
+
+> **Workflow:** Run `ara scan ./my-agent` to find vulnerabilities → add `parry-ai` to block them at runtime.
 
 ---
 

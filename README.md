@@ -296,6 +296,7 @@ report = guard.scan_multi_agent_trust(
 
 ## Links
 
+- [Roadmap](ROADMAP.md) — what's coming in v0.2.0 → v1.0.0
 - [Developer Docs](DEVELOPER.md) — full API reference, all configuration options, integration guides
 - [Examples](examples/) — runnable examples for every threat type
 - [Agent Risk Analyzer](https://github.com/Prnvlol/agent-risk-analyzer) — static security scanner for AI agent codebases (`pip install arascan`)

@@ -1,0 +1,58 @@
+name: Detector request
+description: Suggest a new detector or an improvement to an existing one.
+title: "[Detector]: "
+labels: ["enhancement", "detector"]
+body:
+  - type: markdown
+    attributes:
+      value: Use this for false negatives, false positives, and new threat patterns Parry should understand.
+  - type: textarea
+    id: threat
+    attributes:
+      label: Threat pattern
+      description: What should Parry detect or handle differently?
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example input, output, or tool call
+      description: Provide a realistic sample. Remove secrets and private data.
+      render: text
+    validations:
+      required: true
+  - type: dropdown
+    id: detector
+    attributes:
+      label: Detector area
+      options:
+        - Prompt injection
+        - Jailbreak
+        - Secret scanning
+        - PII
+        - System prompt leak
+        - Tool call
+        - MCP boundary
+        - Multi-agent trust
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Expected action
+      options:
+        - Block
+        - Redact
+        - Log only
+        - Configurable
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Links, references, or known bypasses.
+    validations:
+      required: false

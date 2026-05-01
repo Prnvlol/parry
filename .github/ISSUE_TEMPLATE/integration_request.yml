@@ -1,0 +1,34 @@
+name: Integration request
+description: Request support or examples for an SDK, framework, or runtime.
+title: "[Integration]: "
+labels: ["enhancement", "integration"]
+body:
+  - type: input
+    id: framework
+    attributes:
+      label: Framework or SDK
+      placeholder: "OpenAI, Anthropic, LangChain, CrewAI, AutoGen, FastAPI, MCP..."
+    validations:
+      required: true
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case
+      description: How should Parry fit into this workflow?
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example code
+      description: Optional sample of the current integration pattern.
+      render: python
+    validations:
+      required: false
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Desired behavior
+      description: What should the integration make easier or safer?
+    validations:
+      required: true

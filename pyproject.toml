@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "parry-ai"
-version = "0.1.0"
+version = "0.2.0"
 description = "Agent-native runtime security guardrail for AI agents"
 readme = "README.md"
 license = "MIT"

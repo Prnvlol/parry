@@ -12,7 +12,7 @@ from parry.agent_guard import AgentGuard
 from parry.config import load_config
 from parry.exceptions import GuardException
 from parry.input_guard import InputGuard
-from parry.models import Action, GuardConfig, Mode, ScanReport
+from parry.models import Action, GuardConfig, GuardStats, Mode, ScanReport
 from parry.output_guard import OutputGuard
 
 logger = logging.getLogger("parry")
@@ -48,6 +48,7 @@ class Guard:
         config: str | Path | GuardConfig | None = None,
         mode: str | Mode | None = None,
         system_prompt: str | None = None,
+        on_threat: Callable[[ScanReport], None] | None = None,
         **kwargs: Any,
     ) -> None:
         # Load configuration
@@ -69,16 +70,39 @@ class Guard:
         self._output_guard = OutputGuard(self._config)
         self._agent_guard = AgentGuard(self._config)
 
-        # logger.debug(
-        #     "[PARRY] Initialized | mode=%s | input_detectors=%d | output_detectors=%d",
-        #     self._config.mode.value,
-        #     len(self._input_guard.detectors),
-        #     len(self._output_guard.detectors),
-        # )
+        # Observability
+        self._stats = GuardStats()
+        self._on_threat: Callable[[ScanReport], None] | None = on_threat
 
     @property
     def config(self) -> GuardConfig:
         return self._config
+
+    def stats(self) -> GuardStats:
+        """Return cumulative scan statistics since this Guard was initialised."""
+        return self._stats
+
+    def add_threat_callback(self, fn: Callable[[ScanReport], None]) -> None:
+        """Register a callback to be called whenever threats are detected.
+
+        The callback receives the full ``ScanReport``. Use this to forward
+        threat data to Sentry, Datadog, Slack, or any other sink::
+
+            def alert_slack(report: ScanReport) -> None:
+                requests.post(WEBHOOK, json=report.to_dict())
+
+            guard.add_threat_callback(alert_slack)
+        """
+        self._on_threat = fn
+
+    def _record(self, report: ScanReport) -> None:
+        """Update stats and fire the on_threat callback if threats were found."""
+        self._stats.record(report)
+        if report.threats and self._on_threat is not None:
+            try:
+                self._on_threat(report)
+            except Exception:
+                logger.exception("on_threat callback raised an exception")
 
     # ------------------------------------------------------------------
     # Direct scanning API
@@ -86,11 +110,15 @@ class Guard:
 
     def scan_input(self, text: str) -> ScanReport:
         """Scan input text for threats. Returns a ScanReport."""
-        return self._input_guard.scan(text)
+        report = self._input_guard.scan(text)
+        self._record(report)
+        return report
 
     def scan_output(self, text: str) -> ScanReport:
         """Scan output text for threats. Returns a ScanReport."""
-        return self._output_guard.scan(text)
+        report = self._output_guard.scan(text)
+        self._record(report)
+        return report
 
     def scan_tool_call(
         self,
@@ -98,7 +126,9 @@ class Guard:
         tool_args: dict | str | None = None,
     ) -> ScanReport:
         """Validate a tool call before execution. Returns a ScanReport."""
-        return self._agent_guard.scan_tool_call(tool_name, tool_args)
+        report = self._agent_guard.scan_tool_call(tool_name, tool_args)
+        self._record(report)
+        return report
 
     # ------------------------------------------------------------------
     # Wrapper API
@@ -121,6 +151,7 @@ class Guard:
             input_text = self._extract_input(args, kwargs)
             if input_text:
                 report = self._input_guard.scan(input_text)
+                self._record(report)
                 if report.decision.action == Action.BLOCK:
                     raise GuardException(
                         reason=report.decision.reason,
@@ -134,6 +165,7 @@ class Guard:
             output_text = self._extract_output(result)
             if output_text:
                 report = self._output_guard.scan(output_text)
+                self._record(report)
                 if report.decision.action == Action.BLOCK:
                     raise GuardException(
                         reason=report.decision.reason,

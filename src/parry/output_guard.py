@@ -56,12 +56,18 @@ class OutputGuard:
         elapsed_ms = (time.perf_counter() - start) * 1000
         decision = self._decide(all_threats, text, elapsed_ms)
 
-        report = ScanReport(threats=all_threats, decision=decision)
+        report = ScanReport(
+            threats=all_threats,
+            decision=decision,
+            scan_stage="output",
+            scan_time_ms=elapsed_ms,
+        )
 
         if all_threats:
             top = max(all_threats, key=lambda t: t.confidence)
             logger.warning(
-                "[PARRY] OUTPUT %s | %d threat(s) (%s, %s, %.2f) | %.1fms",
+                '{"event":"parry.threat","stage":"output","action":"%s","threat_count":%d,'
+                '"top_type":"%s","top_severity":"%s","top_confidence":%.2f,"scan_time_ms":%.1f}',
                 decision.action.value,
                 len(all_threats),
                 top.threat_type.value,
@@ -70,7 +76,10 @@ class OutputGuard:
                 elapsed_ms,
             )
         else:
-            pass
+            logger.debug(
+                '{"event":"parry.scan","stage":"output","action":"ALLOW","scan_time_ms":%.1f}',
+                elapsed_ms,
+            )
 
         return report
 

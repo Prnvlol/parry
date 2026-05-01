@@ -54,13 +54,19 @@ class InputGuard:
         elapsed_ms = (time.perf_counter() - start) * 1000
         decision = self._decide(all_threats, elapsed_ms)
 
-        report = ScanReport(threats=all_threats, decision=decision)
+        report = ScanReport(
+            threats=all_threats,
+            decision=decision,
+            scan_stage="input",
+            scan_time_ms=elapsed_ms,
+        )
 
-        # Log the decision
+        # Structured log line — parseable by Datadog / Sentry / any log aggregator
         if all_threats:
             top = max(all_threats, key=lambda t: t.confidence)
             logger.warning(
-                "[PARRY] INPUT  %s | %d threat(s) (%s, %s, %.2f) | %.1fms",
+                '{"event":"parry.threat","stage":"input","action":"%s","threat_count":%d,'
+                '"top_type":"%s","top_severity":"%s","top_confidence":%.2f,"scan_time_ms":%.1f}',
                 decision.action.value,
                 len(all_threats),
                 top.threat_type.value,
@@ -69,7 +75,10 @@ class InputGuard:
                 elapsed_ms,
             )
         else:
-            pass
+            logger.debug(
+                '{"event":"parry.scan","stage":"input","action":"ALLOW","scan_time_ms":%.1f}',
+                elapsed_ms,
+            )
 
         return report
 

@@ -4,11 +4,8 @@ from __future__ import annotations
 
 import json
 
-import pytest
-
 from parry import Guard, GuardStats, ScanReport
 from parry.models import Action
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -216,7 +213,7 @@ class TestGuardStatsStandalone:
         assert s.by_severity == {}
 
     def test_record_increments_correctly(self):
-        from parry.models import Action, GuardDecision, Severity, ThreatResult, ThreatType
+        from parry.models import GuardDecision, Severity, ThreatResult, ThreatType
 
         threat = ThreatResult(
             threat_type=ThreatType.PROMPT_INJECTION,

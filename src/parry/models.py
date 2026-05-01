@@ -8,7 +8,6 @@ from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Any
 
-
 # ---------------------------------------------------------------------------
 # Stats
 # ---------------------------------------------------------------------------
@@ -23,7 +22,7 @@ class GuardStats:
     by_type: dict[str, int] = field(default_factory=dict)
     by_severity: dict[str, int] = field(default_factory=dict)
 
-    def record(self, report: "ScanReport") -> None:  # noqa: F821
+    def record(self, report: ScanReport) -> None:  # noqa: F821
         self.total_scans += 1
         self.total_threats += report.threat_count
         action = report.decision.action.value

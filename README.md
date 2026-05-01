@@ -294,6 +294,12 @@ report = guard.scan_multi_agent_trust(
 
 ---
 
+## Used By
+
+> Using parry in your project? [Open a PR](https://github.com/Prnvlol/parry/edit/master/README.md) to add yourself here.
+
+---
+
 ## Links
 
 - [Roadmap](ROADMAP.md) — what's coming in v0.2.0 → v1.0.0
